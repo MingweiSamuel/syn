@@ -1652,14 +1652,40 @@ pub mod parsing {
             });
         }
 
-        Ok(PatType {
-            attrs: Vec::new(),
-            pat: Box::new(pat::parsing::multi_pat(input)?),
-            colon_token: input.parse()?,
-            ty: Box::new(match input.parse::<Option<Token![...]>>()? {
-                Some(dot3) => Type::Verbatim(variadic_to_tokens(&dot3)),
-                None => input.parse()?,
+        let attrs = Vec::new();
+        let pat = Box::new(pat::parsing::multi_pat(input)?);
+        let colon_token = input.parse()?;
+
+        println!("A");
+
+        // let ty = if input.peek(Token![...]) {
+        //     let ahead = input.fork();
+        //     ahead
+        //         .parse()
+        //         .unwrap_or_else(|_| Type::Verbatim(variadic_to_tokens(&input.parse().unwrap())))
+        // } else {
+        //     input.parse()?
+        // };
+        let ty = match input.parse::<Option<Token![...]>>()? {
+            Some(dot3) if input.is_empty() => Type::Verbatim(variadic_to_tokens(&dot3)),
+            Some(dot3) => Type::Variadic(TypeVariadic {
+                ellipses_token: dot3,
+                elem: input.parse()?,
             }),
+            None => input.parse()?,
+        };
+        // let ty = match input.parse::<Option<Token![...]>>()? {
+        //     Some(dot3) => Type::Verbatim(variadic_to_tokens(&dot3)),
+        //     None => input.parse()?,
+        // };
+
+        println!("B {:#?}", ty);
+
+        Ok(PatType {
+            attrs,
+            pat,
+            colon_token,
+            ty: Box::new(ty),
         })
     }
 

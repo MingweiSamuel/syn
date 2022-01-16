@@ -2672,7 +2672,8 @@ impl Debug for Lite<syn::Item> {
                                             fn fmt(
                                                 &self,
                                                 formatter: &mut fmt::Formatter,
-                                            ) -> fmt::Result {
+                                            ) -> fmt::Result
+                                            {
                                                 match &self.0 {
                                                     Some(_val) => {
                                                         formatter.write_str("Some")?;
@@ -3081,10 +3082,7 @@ impl Debug for Lite<syn::ItemImpl> {
                                 #[repr(transparent)]
                                 struct Print(Option<syn::token::Bang>);
                                 impl Debug for Print {
-                                    fn fmt(
-                                        &self,
-                                        formatter: &mut fmt::Formatter,
-                                    ) -> fmt::Result {
+                                    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                                         match &self.0 {
                                             Some(_val) => {
                                                 formatter.write_str("Some")?;
@@ -4192,8 +4190,7 @@ impl Debug for Lite<syn::PathArguments> {
         match _val {
             syn::PathArguments::None => formatter.write_str("None"),
             syn::PathArguments::AngleBracketed(_val) => {
-                let mut formatter = formatter
-                    .debug_struct("PathArguments::AngleBracketed");
+                let mut formatter = formatter.debug_struct("PathArguments::AngleBracketed");
                 if let Some(val) = &_val.colon2_token {
                     #[derive(RefCast)]
                     #[repr(transparent)]
@@ -4212,8 +4209,7 @@ impl Debug for Lite<syn::PathArguments> {
                 formatter.finish()
             }
             syn::PathArguments::Parenthesized(_val) => {
-                let mut formatter = formatter
-                    .debug_struct("PathArguments::Parenthesized");
+                let mut formatter = formatter.debug_struct("PathArguments::Parenthesized");
                 if !_val.inputs.is_empty() {
                     formatter.field("inputs", Lite(&_val.inputs));
                 }
@@ -4337,10 +4333,7 @@ impl Debug for Lite<syn::Receiver> {
                             #[repr(transparent)]
                             struct Print(Option<syn::Lifetime>);
                             impl Debug for Print {
-                                fn fmt(
-                                    &self,
-                                    formatter: &mut fmt::Formatter,
-                                ) -> fmt::Result {
+                                fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                                     match &self.0 {
                                         Some(_val) => {
                                             formatter.write_str("Some")?;

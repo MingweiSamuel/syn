@@ -648,6 +648,8 @@ pub mod parsing {
             input.parse().map(Type::Infer)
         } else if lookahead.peek(Lifetime) {
             input.parse().map(Type::TraitObject)
+        } else if lookahead.peek(Token![...]) {
+            input.parse().map(Type::Variadic)
         } else {
             Err(lookahead.error())
         }
