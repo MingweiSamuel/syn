@@ -424,7 +424,7 @@ mod ty;
 pub use crate::ty::{
     Abi, BareFnArg, ReturnType, Type, TypeArray, TypeBareFn, TypeGroup, TypeImplTrait, TypeInfer,
     TypeMacro, TypeNever, TypeParen, TypePath, TypePtr, TypeReference, TypeSlice, TypeTraitObject,
-    TypeTuple, Variadic,
+    TypeTuple, TypeVariadic, Variadic,
 };
 
 #[cfg(feature = "full")]

@@ -2460,8 +2460,12 @@ impl Hash for Type {
                 state.write_u8(13u8);
                 v0.hash(state);
             }
-            Type::Verbatim(v0) => {
+            Type::Variadic(v0) => {
                 state.write_u8(14u8);
+                v0.hash(state);
+            }
+            Type::Verbatim(v0) => {
+                state.write_u8(15u8);
                 TokenStreamHelper(v0).hash(state);
             }
             _ => unreachable!(),
@@ -2548,6 +2552,7 @@ impl Hash for TypeParam {
         H: Hasher,
     {
         self.attrs.hash(state);
+        self.ellipses_token.hash(state);
         self.ident.hash(state);
         self.colon_token.hash(state);
         self.bounds.hash(state);
@@ -2648,6 +2653,16 @@ impl Hash for TypeTuple {
         H: Hasher,
     {
         self.elems.hash(state);
+    }
+}
+#[cfg(any(feature = "derive", feature = "full"))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "extra-traits")))]
+impl Hash for TypeVariadic {
+    fn hash<H>(&self, state: &mut H)
+    where
+        H: Hasher,
+    {
+        self.elem.hash(state);
     }
 }
 #[cfg(any(feature = "derive", feature = "full"))]

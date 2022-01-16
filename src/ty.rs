@@ -60,6 +60,9 @@ ast_enum_of_structs! {
         /// A tuple type: `(A, B, C, String)`.
         Tuple(TypeTuple),
 
+        /// Variadic type: `...MyType`.
+        Variadic(TypeVariadic),
+
         /// Tokens in type position not interpreted by Syn.
         Verbatim(TokenStream),
 
@@ -268,6 +271,18 @@ ast_struct! {
     pub struct TypeTuple {
         pub paren_token: token::Paren,
         pub elems: Punctuated<Type, Token![,]>,
+    }
+}
+
+ast_struct! {
+    /// A variadic type: `...MyType`.
+    ///
+    /// *This type is available only if Syn is built with the `"derive"` or
+    /// `"full"` feature.*
+    #[cfg_attr(doc_cfg, doc(cfg(any(feature = "full", feature = "derive"))))]
+    pub struct TypeVariadic {
+        pub ellipses_token: Token![...],
+        pub elem: Box<Type>,
     }
 }
 
@@ -808,6 +823,16 @@ pub mod parsing {
     }
 
     #[cfg_attr(doc_cfg, doc(cfg(feature = "parsing")))]
+    impl Parse for TypeVariadic {
+        fn parse(input: ParseStream) -> Result<Self> {
+            Ok(TypeVariadic {
+                ellipses_token: input.parse()?,
+                elem: input.parse()?,
+            })
+        }
+    }
+
+    #[cfg_attr(doc_cfg, doc(cfg(feature = "parsing")))]
     impl Parse for TypeMacro {
         fn parse(input: ParseStream) -> Result<Self> {
             Ok(TypeMacro {
@@ -1154,6 +1179,14 @@ mod printing {
             self.paren_token.surround(tokens, |tokens| {
                 self.elems.to_tokens(tokens);
             });
+        }
+    }
+
+    #[cfg_attr(doc_cfg, doc(cfg(feature = "printing")))]
+    impl ToTokens for TypeVariadic {
+        fn to_tokens(&self, tokens: &mut TokenStream) {
+            self.ellipses_token.to_tokens(tokens);
+            self.elem.to_tokens(tokens);
         }
     }
 

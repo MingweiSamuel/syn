@@ -719,6 +719,10 @@ pub trait Fold {
         fold_type_tuple(self, i)
     }
     #[cfg(any(feature = "derive", feature = "full"))]
+    fn fold_type_variadic(&mut self, i: TypeVariadic) -> TypeVariadic {
+        fold_type_variadic(self, i)
+    }
+    #[cfg(any(feature = "derive", feature = "full"))]
     fn fold_un_op(&mut self, i: UnOp) -> UnOp {
         fold_un_op(self, i)
     }
@@ -2974,6 +2978,7 @@ where
             Type::TraitObject(f.fold_type_trait_object(_binding_0))
         }
         Type::Tuple(_binding_0) => Type::Tuple(f.fold_type_tuple(_binding_0)),
+        Type::Variadic(_binding_0) => Type::Variadic(f.fold_type_variadic(_binding_0)),
         Type::Verbatim(_binding_0) => Type::Verbatim(_binding_0),
         _ => unreachable!(),
     }
@@ -3060,7 +3065,8 @@ where
 {
     TypeParam {
         attrs: FoldHelper::lift(node.attrs, |it| f.fold_attribute(it)),
-        variadic_token: (node.variadic_token).map(|it| Token![...](tokens_helper(f, &it.spans))),
+        ellipses_token: (node.ellipses_token)
+            .map(|it| Token![...](tokens_helper(f, &it.spans))),
         ident: f.fold_ident(node.ident),
         colon_token: (node.colon_token).map(|it| Token![:](tokens_helper(f, &it.spans))),
         bounds: FoldHelper::lift(node.bounds, |it| f.fold_type_param_bound(it)),
@@ -3155,6 +3161,16 @@ where
     TypeTuple {
         paren_token: Paren(tokens_helper(f, &node.paren_token.span)),
         elems: FoldHelper::lift(node.elems, |it| f.fold_type(it)),
+    }
+}
+#[cfg(any(feature = "derive", feature = "full"))]
+pub fn fold_type_variadic<F>(f: &mut F, node: TypeVariadic) -> TypeVariadic
+where
+    F: Fold + ?Sized,
+{
+    TypeVariadic {
+        ellipses_token: Token![...](tokens_helper(f, &node.ellipses_token.spans)),
+        elem: Box::new(f.fold_type(*node.elem)),
     }
 }
 #[cfg(any(feature = "derive", feature = "full"))]

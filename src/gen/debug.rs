@@ -2628,6 +2628,11 @@ impl Debug for Type {
                 formatter.field(v0);
                 formatter.finish()
             }
+            Type::Variadic(v0) => {
+                let mut formatter = formatter.debug_tuple("Variadic");
+                formatter.field(v0);
+                formatter.finish()
+            }
             Type::Verbatim(v0) => {
                 let mut formatter = formatter.debug_tuple("Verbatim");
                 formatter.field(v0);
@@ -2718,6 +2723,7 @@ impl Debug for TypeParam {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         let mut formatter = formatter.debug_struct("TypeParam");
         formatter.field("attrs", &self.attrs);
+        formatter.field("ellipses_token", &self.ellipses_token);
         formatter.field("ident", &self.ident);
         formatter.field("colon_token", &self.colon_token);
         formatter.field("bounds", &self.bounds);
@@ -2815,6 +2821,16 @@ impl Debug for TypeTuple {
         let mut formatter = formatter.debug_struct("TypeTuple");
         formatter.field("paren_token", &self.paren_token);
         formatter.field("elems", &self.elems);
+        formatter.finish()
+    }
+}
+#[cfg(any(feature = "derive", feature = "full"))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "extra-traits")))]
+impl Debug for TypeVariadic {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        let mut formatter = formatter.debug_struct("TypeVariadic");
+        formatter.field("ellipses_token", &self.ellipses_token);
+        formatter.field("elem", &self.elem);
         formatter.finish()
     }
 }

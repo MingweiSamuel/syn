@@ -1898,6 +1898,7 @@ impl Clone for Type {
             Type::Slice(v0) => Type::Slice(v0.clone()),
             Type::TraitObject(v0) => Type::TraitObject(v0.clone()),
             Type::Tuple(v0) => Type::Tuple(v0.clone()),
+            Type::Variadic(v0) => Type::Variadic(v0.clone()),
             Type::Verbatim(v0) => Type::Verbatim(v0.clone()),
             _ => unreachable!(),
         }
@@ -1976,24 +1977,13 @@ impl Clone for TypeNever {
         }
     }
 }
-// #[cfg(any(feature = "derive", feature = "full"))]
-// #[cfg_attr(doc_cfg, doc(cfg(feature = "clone-impls")))]
-// impl Clone for VariadicParam {
-//     fn clone(&self) -> Self {
-//         VariadicParam {
-//             attrs: self.attrs.clone(),
-//             ellipses_token: self.ellipses_token.clone(),
-//             type_param: self.type_param.clone(),
-//         }
-//     }
-// }
 #[cfg(any(feature = "derive", feature = "full"))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "clone-impls")))]
 impl Clone for TypeParam {
     fn clone(&self) -> Self {
         TypeParam {
             attrs: self.attrs.clone(),
-            variadic_token: self.variadic_token.clone(),
+            ellipses_token: self.ellipses_token.clone(),
             ident: self.ident.clone(),
             colon_token: self.colon_token.clone(),
             bounds: self.bounds.clone(),
@@ -2083,6 +2073,16 @@ impl Clone for TypeTuple {
         TypeTuple {
             paren_token: self.paren_token.clone(),
             elems: self.elems.clone(),
+        }
+    }
+}
+#[cfg(any(feature = "derive", feature = "full"))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "clone-impls")))]
+impl Clone for TypeVariadic {
+    fn clone(&self) -> Self {
+        TypeVariadic {
+            ellipses_token: self.ellipses_token.clone(),
+            elem: self.elem.clone(),
         }
     }
 }

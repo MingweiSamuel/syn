@@ -5045,6 +5045,11 @@ impl Debug for Lite<syn::Type> {
                 }
                 formatter.finish()
             }
+            syn::Type::Variadic(_val) => {
+                let mut formatter = formatter.debug_struct("Type::Variadic");
+                formatter.field("elem", Lite(&_val.elem));
+                formatter.finish()
+            }
             syn::Type::Verbatim(_val) => {
                 formatter.write_str("Verbatim")?;
                 formatter.write_str("(`")?;
@@ -5182,6 +5187,18 @@ impl Debug for Lite<syn::TypeParam> {
         let mut formatter = formatter.debug_struct("TypeParam");
         if !_val.attrs.is_empty() {
             formatter.field("attrs", Lite(&_val.attrs));
+        }
+        if let Some(val) = &_val.ellipses_token {
+            #[derive(RefCast)]
+            #[repr(transparent)]
+            struct Print(syn::token::Dot3);
+            impl Debug for Print {
+                fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                    formatter.write_str("Some")?;
+                    Ok(())
+                }
+            }
+            formatter.field("ellipses_token", Print::ref_cast(val));
         }
         formatter.field("ident", Lite(&_val.ident));
         if let Some(val) = &_val.colon_token {
@@ -5388,6 +5405,14 @@ impl Debug for Lite<syn::TypeTuple> {
         if !_val.elems.is_empty() {
             formatter.field("elems", Lite(&_val.elems));
         }
+        formatter.finish()
+    }
+}
+impl Debug for Lite<syn::TypeVariadic> {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        let _val = &self.value;
+        let mut formatter = formatter.debug_struct("TypeVariadic");
+        formatter.field("elem", Lite(&_val.elem));
         formatter.finish()
     }
 }

@@ -4768,6 +4768,11 @@
             "syn": "TypeTuple"
           }
         ],
+        "Variadic": [
+          {
+            "syn": "TypeVariadic"
+          }
+        ],
         "Verbatim": [
           {
             "proc_macro2": "TokenStream"
@@ -4944,6 +4949,11 @@
         "attrs": {
           "vec": {
             "syn": "Attribute"
+          }
+        },
+        "ellipses_token": {
+          "option": {
+            "token": "Dot3"
           }
         },
         "ident": {
@@ -5152,6 +5162,25 @@
               "syn": "Type"
             },
             "punct": "Comma"
+          }
+        }
+      }
+    },
+    {
+      "ident": "TypeVariadic",
+      "features": {
+        "any": [
+          "derive",
+          "full"
+        ]
+      },
+      "fields": {
+        "ellipses_token": {
+          "token": "Dot3"
+        },
+        "elem": {
+          "box": {
+            "syn": "Type"
           }
         }
       }

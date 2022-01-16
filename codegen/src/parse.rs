@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 use syn::parse::{Error, Parser};
 use syn::{
     parse_quote, Attribute, Data, DataEnum, DataStruct, DeriveInput, Fields, GenericArgument,
-    Ident, Item, PathArguments, TypeMacro, TypePath, TypeTuple, Visibility,
+    Ident, Item, PathArguments, TypeMacro, TypePath, TypeTuple, TypeVariadic, Visibility,
 };
 use syn_codegen as types;
 use thiserror::Error;

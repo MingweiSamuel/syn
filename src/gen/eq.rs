@@ -1832,6 +1832,7 @@ impl PartialEq for Type {
             (Type::Slice(self0), Type::Slice(other0)) => self0 == other0,
             (Type::TraitObject(self0), Type::TraitObject(other0)) => self0 == other0,
             (Type::Tuple(self0), Type::Tuple(other0)) => self0 == other0,
+            (Type::Variadic(self0), Type::Variadic(other0)) => self0 == other0,
             (Type::Verbatim(self0), Type::Verbatim(other0)) => {
                 TokenStreamHelper(self0) == TokenStreamHelper(other0)
             }
@@ -1918,9 +1919,10 @@ impl Eq for TypeParam {}
 #[cfg_attr(doc_cfg, doc(cfg(feature = "extra-traits")))]
 impl PartialEq for TypeParam {
     fn eq(&self, other: &Self) -> bool {
-        self.attrs == other.attrs && self.ident == other.ident
-            && self.colon_token == other.colon_token && self.bounds == other.bounds
-            && self.eq_token == other.eq_token && self.default == other.default
+        self.attrs == other.attrs && self.ellipses_token == other.ellipses_token
+            && self.ident == other.ident && self.colon_token == other.colon_token
+            && self.bounds == other.bounds && self.eq_token == other.eq_token
+            && self.default == other.default
     }
 }
 #[cfg(any(feature = "derive", feature = "full"))]
@@ -2011,6 +2013,16 @@ impl Eq for TypeTuple {}
 impl PartialEq for TypeTuple {
     fn eq(&self, other: &Self) -> bool {
         self.elems == other.elems
+    }
+}
+#[cfg(any(feature = "derive", feature = "full"))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "extra-traits")))]
+impl Eq for TypeVariadic {}
+#[cfg(any(feature = "derive", feature = "full"))]
+#[cfg_attr(doc_cfg, doc(cfg(feature = "extra-traits")))]
+impl PartialEq for TypeVariadic {
+    fn eq(&self, other: &Self) -> bool {
+        self.elem == other.elem
     }
 }
 #[cfg(any(feature = "derive", feature = "full"))]

@@ -716,6 +716,10 @@ pub trait VisitMut {
         visit_type_tuple_mut(self, i);
     }
     #[cfg(any(feature = "derive", feature = "full"))]
+    fn visit_type_variadic_mut(&mut self, i: &mut TypeVariadic) {
+        visit_type_variadic_mut(self, i);
+    }
+    #[cfg(any(feature = "derive", feature = "full"))]
     fn visit_un_op_mut(&mut self, i: &mut UnOp) {
         visit_un_op_mut(self, i);
     }
@@ -3380,6 +3384,9 @@ where
         Type::Tuple(_binding_0) => {
             v.visit_type_tuple_mut(_binding_0);
         }
+        Type::Variadic(_binding_0) => {
+            v.visit_type_variadic_mut(_binding_0);
+        }
         Type::Verbatim(_binding_0) => {
             skip!(_binding_0);
         }
@@ -3474,6 +3481,9 @@ where
 {
     for it in &mut node.attrs {
         v.visit_attribute_mut(it);
+    }
+    if let Some(it) = &mut node.ellipses_token {
+        tokens_helper(v, &mut it.spans);
     }
     v.visit_ident_mut(&mut node.ident);
     if let Some(it) = &mut node.colon_token {
@@ -3590,6 +3600,14 @@ where
             tokens_helper(v, &mut p.spans);
         }
     }
+}
+#[cfg(any(feature = "derive", feature = "full"))]
+pub fn visit_type_variadic_mut<V>(v: &mut V, node: &mut TypeVariadic)
+where
+    V: VisitMut + ?Sized,
+{
+    tokens_helper(v, &mut node.ellipses_token.spans);
+    v.visit_type_mut(&mut *node.elem);
 }
 #[cfg(any(feature = "derive", feature = "full"))]
 pub fn visit_un_op_mut<V>(v: &mut V, node: &mut UnOp)
