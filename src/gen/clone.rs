@@ -1976,12 +1976,24 @@ impl Clone for TypeNever {
         }
     }
 }
+// #[cfg(any(feature = "derive", feature = "full"))]
+// #[cfg_attr(doc_cfg, doc(cfg(feature = "clone-impls")))]
+// impl Clone for VariadicParam {
+//     fn clone(&self) -> Self {
+//         VariadicParam {
+//             attrs: self.attrs.clone(),
+//             ellipses_token: self.ellipses_token.clone(),
+//             type_param: self.type_param.clone(),
+//         }
+//     }
+// }
 #[cfg(any(feature = "derive", feature = "full"))]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "clone-impls")))]
 impl Clone for TypeParam {
     fn clone(&self) -> Self {
         TypeParam {
             attrs: self.attrs.clone(),
+            variadic_token: self.variadic_token.clone(),
             ident: self.ident.clone(),
             colon_token: self.colon_token.clone(),
             bounds: self.bounds.clone(),

@@ -3060,6 +3060,7 @@ where
 {
     TypeParam {
         attrs: FoldHelper::lift(node.attrs, |it| f.fold_attribute(it)),
+        variadic_token: (node.variadic_token).map(|it| Token![...](tokens_helper(f, &it.spans))),
         ident: f.fold_ident(node.ident),
         colon_token: (node.colon_token).map(|it| Token![:](tokens_helper(f, &it.spans))),
         bounds: FoldHelper::lift(node.bounds, |it| f.fold_type_param_bound(it)),

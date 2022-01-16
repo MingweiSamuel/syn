@@ -53,6 +53,7 @@ ast_struct! {
     #[cfg_attr(doc_cfg, doc(cfg(any(feature = "full", feature = "derive"))))]
     pub struct TypeParam {
         pub attrs: Vec<Attribute>,
+        pub variadic_token: Option<Token![...]>,
         pub ident: Ident,
         pub colon_token: Option<Token![:]>,
         pub bounds: Punctuated<TypeParamBound, Token![+]>,
@@ -458,6 +459,7 @@ impl From<Ident> for TypeParam {
     fn from(ident: Ident) -> Self {
         TypeParam {
             attrs: vec![],
+            variadic_token: None,
             ident,
             colon_token: None,
             bounds: Punctuated::new(),
@@ -626,9 +628,15 @@ pub mod parsing {
                         attrs,
                         ..input.parse()?
                     }));
+                } else if input.peek(Token![...]) {
+                    params.push_value(GenericParam::Type(TypeParam {
+                        attrs,
+                        ..input.parse()?
+                    }));
                 } else if input.peek(Token![_]) {
                     params.push_value(GenericParam::Type(TypeParam {
                         attrs,
+                        variadic_token: None,
                         ident: input.call(Ident::parse_any)?,
                         colon_token: None,
                         bounds: Punctuated::new(),
@@ -759,6 +767,7 @@ pub mod parsing {
     impl Parse for TypeParam {
         fn parse(input: ParseStream) -> Result<Self> {
             let attrs = input.call(Attribute::parse_outer)?;
+            let variadic_token: Option<Token![...]> = input.parse()?;
             let ident: Ident = input.parse()?;
             let colon_token: Option<Token![:]> = input.parse()?;
 
@@ -800,6 +809,7 @@ pub mod parsing {
 
             Ok(TypeParam {
                 attrs,
+                variadic_token,
                 ident,
                 colon_token,
                 bounds,
